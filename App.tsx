@@ -57,7 +57,7 @@ export default function App() {
                             setIsLoading(false);
                             var permission = Permissions.askAsync(Permissions.NOTIFICATIONS);
 
-                            permission.then(p => {
+                            permission.then(() => {
                                 const localNotification = {
                                     title: 'CockTime is on! ',
                                     body: 'Get up and suck some!',
@@ -72,16 +72,11 @@ export default function App() {
                                             vibrate: true
                                         }
                                 };
-                                let t = new Date();
-                                t.setSeconds(t.getSeconds() + 10);
                                 const schedulingOptions = {
-                                    time: t
+                                    time: timeOfSunrise
                                 };
                                 // @ts-ignore
-                                var notif = Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
-                                notif.then(c => {
-                                    console.log(c)
-                                })
+                                Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions).then(() => {});
                             })
 
 
