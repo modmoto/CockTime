@@ -21,7 +21,6 @@ export default function App() {
         .then(response => {
           setIsLoading(false);
           setSunRise(response.results.sunset);
-          console.log(response.results.sunset);
         })
         .catch(error => console.log(error));
   }, [sunrise]);
