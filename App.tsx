@@ -54,7 +54,7 @@ export default function App() {
 
     let content = isLoading
         ? <Text>Loading...</Text>
-        : <Text>Welcome to CockTime! Sun rises on {sunrise.sunset.toLocaleDateString()}</Text>;
+        : <Text>Welcome to CockTime! Yoularrm will go off on {sunrise.sunset.toLocaleTimeString()} tomorrow</Text>;
 
     return (
         <View style={styles.container}>
