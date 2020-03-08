@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import * as Calendar from 'expo-calendar';
-
+import { Notifications } from 'expo';
 
 class Sunset {
     public sunset: Date;
@@ -56,31 +55,33 @@ export default function App() {
 
                             setSunRise(new Sunset(timeOfSunrise));
                             setIsLoading(false);
-                            var permission = Permissions.askAsync('calendar');
+                            var permission = Permissions.askAsync(Permissions.NOTIFICATIONS);
+
                             permission.then(p => {
-                                var cal= Calendar.getCalendarsAsync();
-                                cal.then(c => {
-
-                                    let defaultCalendarAsync = Calendar.getDefaultCalendarAsync();
-                                    defaultCalendarAsync.then(d => {
-                                        Calendar.createEventAsync(d.id, {
-                                            startDate: timeOfSunrise,
-                                            endDate: timeOfSunrise,
-                                            title: "Cockk Time Is on!",
-                                            timeZone: "GMT-7",
-                                            alarms: [ { absoluteDate: formatDate(timeOfSunrise) } ]
-                                        })
-                                            .then( event => {
-                                                console.log('success',event);
-                                            })
-                                            .catch( error => {
-                                                console.log('failure',error);
-                                            });
-                                    })
-
+                                const localNotification = {
+                                    title: 'CockTime is on! ',
+                                    body: 'Get up and suck some!',
+                                    ios: {
+                                        sound: true
+                                    },
+                                    android:
+                                        {
+                                            sound: true,
+                                            priority: 'high',
+                                            sticky: false,
+                                            vibrate: true
+                                        }
+                                };
+                                let t = new Date();
+                                t.setSeconds(t.getSeconds() + 10);
+                                const schedulingOptions = {
+                                    time: t
+                                };
+                                // @ts-ignore
+                                var notif = Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions);
+                                notif.then(c => {
+                                    console.log(c)
                                 })
-
-
                             })
 
 
