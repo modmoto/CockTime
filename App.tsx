@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import {Notifications} from 'expo';
-import {Sunset} from "./Sunset";
+import {Sunset} from "./app/domain/Sunset";
 
 export default function App() {
     const [sunrise, setSunRise] = useState(null);
