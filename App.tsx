@@ -2,24 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import { Notifications } from 'expo';
-
-class Sunset {
-    public sunset: Date;
-
-    constructor(sunset: Date) {
-        this.sunset = sunset;
-    }
-}
-
-function formatDate(timeOfSunrise: Date): string {
-    const dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit', hour:'2-digit', minute:'2-digit',
-        second:'2-digit'});
-    let dateTimeFormatParts = dtf.formatToParts(timeOfSunrise);
-    const [{ value: mo },,{ value: da },,{ value: ye },,{ value: hr},,{ value: mn}] = dateTimeFormatParts;
-
-    return `${ye}-${mo}-${da}T${hr}:${mn}:00.000Z`;
-}
+import {Notifications} from 'expo';
+import {Sunset} from "./Sunset";
 
 export default function App() {
     const [sunrise, setSunRise] = useState(null);
@@ -89,7 +73,7 @@ export default function App() {
 
     let content = isLoading
         ? <Text>Loading...</Text>
-        : <Text>Welcome to CockTime! Yoularrm will go off on {sunrise.sunset.toLocaleTimeString()} tomorrow</Text>;
+        : <Text>Welcome to CockTime! Your alarm will go off on {sunrise.sunset.toLocaleTimeString()}</Text>;
 
     return (
         <View style={styles.container}>
