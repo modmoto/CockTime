@@ -61,14 +61,13 @@ export default function AppContent () {
 
     let content = sunrise ? (
         <>
-            <Text>Time is {sunrise.cocktime.toLocaleTimeString()}</Text>
-            <Text>Set Alarm to {sunrise.sunrise.toLocaleTimeString()}</Text>
-            <Text>Lunchtime: {sunrise.lunchtime.toLocaleTimeString()}</Text>
-            <Text>Bedtime: {sunrise.bedtime.toLocaleTimeString()}</Text>
+            <Text style={{fontSize: 50}}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
+            <Text>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text>-</Text>
 
-            <Text>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString()}</Text>
-            <Text>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString()}</Text>
-            <Text>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString()}</Text>
+            <Text>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
         </>
     ) : null;
     return (
@@ -77,8 +76,8 @@ export default function AppContent () {
                 isLoading
                 ? <Text>Loading</Text>
                 : <>
-                    <Button onPress={onClick} title={'Calculate sunrise!'}/>
                     {content}
+                    <Button onPress={onClick} title={'Calculate sunrise!'}/>
                 </>
             }
         </View>
