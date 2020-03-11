@@ -1,83 +1,68 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import {Sunset} from "./domain/Sunset";
 import {Notifications} from "expo";
-import {StyleSheet, Text, View} from "react-native";
+import {Button, StyleSheet, Text, View} from "react-native";
+import SunCalc from "suncalc";
+import {NotificationTouple} from "./NotificationTouple";
 
 export default function AppContent () {
     const [sunrise, setSunRise] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        let statusPromise = Permissions.askAsync(Permissions.LOCATION);
-        statusPromise.then(t => {
-            if (t.granted) {
-                Location.getCurrentPositionAsync({}).then(r => {
-                    const location = r.coords;
-                    fetch(
-                        `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=today`,
-                        {
-                            method: "GET",
-                            headers: new Headers({
-                                Accept: "application/json"
-                            })
-                        }
-                    )
-                        .then(res => res.json())
-                        .then(response => {
-                            let sunset = response.results.sunset;
-                            const timeValues = sunset.split(':');
-                            const hour = timeValues[0];
-                            const minute = timeValues[1];
-                            const second = timeValues[2].split(' ')[0];
-
-                            const timeOfSunrise = new Date();
-                            timeOfSunrise.setHours(hour);
-                            timeOfSunrise.setMinutes(minute);
-                            timeOfSunrise.setSeconds(second);
-
-                            setSunRise(new Sunset(timeOfSunrise));
-                            setIsLoading(false);
-                            var permission = Permissions.askAsync(Permissions.NOTIFICATIONS);
-
-                            permission.then(() => {
-                                const localNotification = {
-                                    title: 'CockTime is on! ',
-                                    body: 'Get up and suck some!',
-                                    ios: {
-                                        sound: true
-                                    },
-                                    android:
-                                        {
-                                            sound: true,
-                                            priority: 'high',
-                                            sticky: false,
-                                            vibrate: true
-                                        }
-                                };
-                                const schedulingOptions = {
-                                    time: timeOfSunrise
-                                };
-                                // @ts-ignore
-                                Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions).then(() => {});
-                            })
-
-
-                        })
-                        .catch(error => console.log(error));
-                });
+    const onClick = async () => {
+        setIsLoading(true);
+        let locationPermission = await Permissions.askAsync(Permissions.LOCATION);
+        if (locationPermission.granted) {
+            let locationData = await Location.getCurrentPositionAsync();
+            const location = locationData.coords;
+            let date = new Date();
+            let nextDate = new Date();
+            if (date.getHours() > 4) {
+                date.setDate(date.getDay() + 1);
+                nextDate.setDate(nextDate.getDay() + 2);
             }
-        });
-    }, []);
+            const times = SunCalc.getTimes(date, location.latitude, location.longitude);
+            const nextSunrise = SunCalc.getTimes(nextDate, location.latitude, location.longitude);
+            setSunRise(times.sunrise);
 
-    let content = isLoading
-        ? <Text>Loading...</Text>
-: <Text>Welcome to CockTime! Your alarm will go off on {sunrise.sunset.toLocaleTimeString()}</Text>;
+            var notificationPermision = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+            if (notificationPermision.granted) {
+                const morning = new NotificationTouple('CockTime is on!', 'Get up and suck some!', sunrise);
+                const lunchi = sunrise;
+                const bedi = nextSunrise.sunrise;
+                lunchi.setHours(sunrise.getHours() + 6);
+                const lunch = new NotificationTouple('Lunch!', 'Have a nive meal', lunchi);
+                bedi.setHours(bedi.getHours() - 7);
+                const bed = new NotificationTouple('Bedtime!', 'seven hours to next sunset', bedi);
+
+                await Notifications.scheduleLocalNotificationAsync(morning.notification, morning.schedule);
+                await Notifications.scheduleLocalNotificationAsync(lunch.notification, lunch.schedule);
+                await Notifications.scheduleLocalNotificationAsync(bed.notification, bed.schedule);
+            }
+        }
+
+        setIsLoading(false);
+    };
+
+    let content = sunrise ? (
+        <>
+            <Text>Time is {(new Date(0, 0, 0, new Date().getHours() - sunrise.getHours(), new Date().getMinutes() - sunrise.getMinutes(), 0).toLocaleTimeString())}</Text>
+            <Text>Welcome to CockTime! Your alarm will go off on {sunrise.toLocaleTimeString()}</Text>
+        </>
+    ) : null;
     return (
         <View style={styles.container}>
-            {content}
-            </View>
+            {
+                isLoading
+                ? <Text>Loading</Text>
+                : <>
+                    <Button onPress={onClick} title={'Calculate sunrise!'}/>
+                    {content}
+                </>
+            }
+        </View>
     );
 }
 
