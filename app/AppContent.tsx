@@ -63,8 +63,7 @@ export default function AppContent () {
         <>
             <Text style={{fontSize: 50}}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
             <Text>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text>TESTPIPI-</Text>
-
+            <Text>-</Text>
             <Text>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
             <Text>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
             <Text>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
