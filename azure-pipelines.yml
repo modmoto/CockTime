@@ -13,6 +13,6 @@ steps:
 - script: |
     npm install
     npm run build
-    npx expo login -u $(EXPO_USERNAME) -p $(EXPO_PASSWORD)
+    npx expo login -u $(EXPO_USERNAME) -p '$(EXPO_PASSWORD)'
     npx expo publish --non-interactive
   displayName: 'npm install, build and deploz'
