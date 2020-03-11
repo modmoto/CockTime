@@ -11,6 +11,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
     npm install
     npm run build
     npx expo login -u $(EXPO_USERNAME) -p $(EXPO_PASSWORD)
