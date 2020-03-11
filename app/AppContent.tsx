@@ -44,7 +44,7 @@ export default function AppContent () {
     const onClick = async () => {
         setIsLoading(true);
 
-        var notificationPermission = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        const notificationPermission = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 
         if (notificationPermission.granted) {
             const morning = new NotificationTouple('CockTime is on!', 'Get up and suck some!', sunrise.sunrise);
