@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
@@ -23,27 +23,37 @@ export default function AppContent () {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        async function doAsync() {
+            setIsLoading(true);
+
+            let locationPermission = await Permissions.askAsync(Permissions.LOCATION);
+            if (locationPermission.granted) {
+                let locationData = await Location.getCurrentPositionAsync();
+                const location = locationData.coords;
+                const {todays, nextSunrise} = getRelevantSunrises(location);
+                setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise));
+            }
+
+            setIsLoading(false);
+        }
+
+        doAsync().then(() => {});
+    }, []);
+
     const onClick = async () => {
         setIsLoading(true);
-        let locationPermission = await Permissions.askAsync(Permissions.LOCATION);
-        if (locationPermission.granted) {
-            let locationData = await Location.getCurrentPositionAsync();
-            const location = locationData.coords;
-            const {todays, nextSunrise} = getRelevantSunrises(location);
-            let timesOfTheDay = new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise);
-            setSunRise(timesOfTheDay);
 
-            var notificationPermision = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        var notificationPermission = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 
-            if (notificationPermision.granted) {
-                const morning = new NotificationTouple('CockTime is on!', 'Get up and suck some!', timesOfTheDay.sunrise);
-                const lunch = new NotificationTouple('Lunch!', 'Have a nive meal', timesOfTheDay.lunchtime);
-                const bed = new NotificationTouple('Bedtime!', 'seven hours to next sunset', timesOfTheDay.bedtime);
+        if (notificationPermission.granted) {
+            const morning = new NotificationTouple('CockTime is on!', 'Get up and suck some!', sunrise.sunrise);
+            const lunch = new NotificationTouple('Lunch!', 'Have a nive meal', sunrise.lunchtime);
+            const bed = new NotificationTouple('Bedtime!', 'seven hours to next sunset', sunrise.bedtime);
 
-                await Notifications.scheduleLocalNotificationAsync(morning.notification, morning.schedule);
-                await Notifications.scheduleLocalNotificationAsync(lunch.notification, lunch.schedule);
-                await Notifications.scheduleLocalNotificationAsync(bed.notification, bed.schedule);
-            }
+            await Notifications.scheduleLocalNotificationAsync(morning.notification, morning.schedule);
+            await Notifications.scheduleLocalNotificationAsync(lunch.notification, lunch.schedule);
+            await Notifications.scheduleLocalNotificationAsync(bed.notification, bed.schedule);
         }
 
         setIsLoading(false);
@@ -51,10 +61,14 @@ export default function AppContent () {
 
     let content = sunrise ? (
         <>
-            <Text>Time is {(new Date(0, 0, 0, new Date().getHours() - sunrise.sunrise.getHours(), new Date().getMinutes() - sunrise.sunrise.getMinutes(), 0).toLocaleTimeString())}</Text>
-            <Text>Welcome to CockTime! Your alarm will go off on {sunrise.sunrise.toLocaleTimeString()}</Text>
+            <Text>Time is {sunrise.cocktime.toLocaleTimeString()}</Text>
+            <Text>Set Alarm to {sunrise.sunrise.toLocaleTimeString()}</Text>
             <Text>Lunchtime: {sunrise.lunchtime.toLocaleTimeString()}</Text>
             <Text>Bedtime: {sunrise.bedtime.toLocaleTimeString()}</Text>
+
+            <Text>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString()}</Text>
+            <Text>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString()}</Text>
+            <Text>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString()}</Text>
         </>
     ) : null;
     return (
