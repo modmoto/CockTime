@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     button: {
+        backgroundColor: ColorPalette.bgLight,
         borderColor: ColorPalette.primary,
         borderWidth: 10,
         margin: screen.width / 18,
