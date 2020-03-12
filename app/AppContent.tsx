@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
@@ -39,6 +39,7 @@ export default function AppContent () {
         }
 
         doAsync().then(() => {});
+        setInterval(doAsync, 1000);
     }, []);
 
     const setNotifications = async () => {
