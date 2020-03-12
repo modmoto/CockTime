@@ -7,6 +7,8 @@ import SunCalc from "suncalc";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./ColorPalette";
+import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import {faBell, faSun, faMoon, faUtensils} from "@fortawesome/free-solid-svg-icons";
 
 const screen = Dimensions.get('window');
 
@@ -69,11 +71,20 @@ export default function AppContent () {
         </>
     ) : null;
     let lowerContent = sunrise
-        ? <>
-            <Text style={styles.textColorAccent}>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text style={styles.textColorAccent}>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text style={styles.textColorAccent}>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
-        </>
+        ? <View style={styles.timeContainer}>
+            <View style={styles.buttonUp}>
+                <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faSun } />
+                <Text style={styles.textColorAccent}>-{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
+            </View>
+            <View style={styles.buttonDown}>
+                <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faUtensils } />
+                <Text style={styles.textColorAccent}>-{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
+            </View>
+            <View style={styles.buttonUp}>
+                <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faMoon } />
+                <Text style={styles.textColorAccent}>-{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
+            </View>
+        </View>
         : null;
     return (
         <View style={styles.container}>
@@ -83,7 +94,7 @@ export default function AppContent () {
                 : <>
                     {content}
                     <TouchableOpacity onPress={setNotifications} style={styles.button}>
-                        <Text style={styles.buttonText}>sunrise</Text>
+                        <FontAwesomeIcon size={screen.width/4} style={styles.iconButton} icon={ faBell } />
                     </TouchableOpacity>
                     {lowerContent}
                 </>
@@ -104,6 +115,7 @@ const styles = StyleSheet.create({
         borderColor: ColorPalette.primary,
         borderWidth: 10,
         margin: screen.width / 18,
+        marginBottom: 0,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: screen.width / 2,
@@ -121,9 +133,18 @@ const styles = StyleSheet.create({
     textColorAccent: {
         color: ColorPalette.accent
     },
-    buttonText: {
+    iconButton: {
         color:  ColorPalette.primary,
-        fontSize: screen.width/10,
-        textAlign: 'center'
+    },
+    timeContainer: {
+        width: screen.width * 0.7,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    buttonUp: {
+        marginTop: -screen.width * 0.08
+    },
+    buttonDown: {
+        marginTop: screen.width * 0.08
     }
 });

@@ -8,12 +8,18 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-native-fontawesome": "^0.2.3",
+    "css-select": "^2.1.0",
+    "css-tree": "^1.0.0-alpha.39",
     "expo": "~36.0.0",
     "expo-location": "~8.0.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
     "react-native-screens": "2.0.0-alpha.12",
+    "react-native-svg": "^10.1.0",
     "react-native-web": "~0.11.7",
     "suncalc": "^1.8.0"
   },
