@@ -2,10 +2,13 @@ import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
-import {Button, StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
 import SunCalc from "suncalc";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
+import {ColorPalette} from "./ColorPalette";
+
+const screen = Dimensions.get('window');
 
 function getRelevantSunrises(location: { latitude: number; longitude: number; altitude: number; accuracy: number; heading: number; speed: number }) {
     let date = new Date();
@@ -41,7 +44,7 @@ export default function AppContent () {
         doAsync().then(() => {});
     }, []);
 
-    const onClick = async () => {
+    const setNotifications = async () => {
         setIsLoading(true);
 
         const notificationPermission = await Permissions.askAsync(Permissions.NOTIFICATIONS);
@@ -61,14 +64,17 @@ export default function AppContent () {
 
     let content = sunrise ? (
         <>
-            <Text style={{fontSize: 50}}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
-            <Text>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text>-</Text>
-            <Text>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
-            <Text>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text style={styles.watchText}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
+            <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)}</Text>
         </>
     ) : null;
+    let lowerContent = sunrise
+        ? <>
+            <Text style={styles.textColorAccent}>Hours until waking: -{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text style={styles.textColorAccent}>Hours to Lunch: -{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text style={styles.textColorAccent}>Hours to Bed: -{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
+        </>
+        : null;
     return (
         <View style={styles.container}>
             {
@@ -76,7 +82,10 @@ export default function AppContent () {
                 ? <Text>Loading</Text>
                 : <>
                     {content}
-                    <Button onPress={onClick} title={'Calculate sunrise!'}/>
+                    <TouchableOpacity onPress={setNotifications} style={styles.button}>
+                        <Text style={styles.buttonText}>sunrise</Text>
+                    </TouchableOpacity>
+                    {lowerContent}
                 </>
             }
         </View>
@@ -86,8 +95,34 @@ export default function AppContent () {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: ColorPalette.bgDarker,
         alignItems: 'center',
         justifyContent: 'center',
     },
+    button: {
+        borderColor: ColorPalette.primary,
+        borderWidth: 10,
+        margin: screen.width / 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: screen.width / 2,
+        width: screen.width / 2,
+        height: screen.width / 2,
+     },
+    watchText: {
+        color: ColorPalette.primary,
+        fontSize: screen.width/6
+    },
+    watchSubText: {
+        color: ColorPalette.primary,
+        fontSize: screen.width/18
+    },
+    textColorAccent: {
+        color: ColorPalette.accent
+    },
+    buttonText: {
+        color:  ColorPalette.primary,
+        fontSize: screen.width/10,
+        textAlign: 'center'
+    }
 });
