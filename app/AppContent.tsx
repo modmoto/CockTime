@@ -105,8 +105,8 @@ export default function AppContent () {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: ColorPalette.bgYellow,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         borderRadius: screen.width / 2,
         width: screen.width / 2,
         height: screen.width / 2,
-     },
+    },
     watchText: {
         color: ColorPalette.primary,
         fontSize: screen.width/6
@@ -131,6 +131,8 @@ const styles = StyleSheet.create({
         fontSize: screen.width/18
     },
     textColorAccent: {
+        fontSize: screen.width * 0.04,
+        marginTop: screen.width * 0.02,
         color: ColorPalette.accent
     },
     iconButton: {
@@ -142,9 +144,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     buttonUp: {
+        alignItems: 'center',
+        justifyContent: 'center',
         marginTop: -screen.width * 0.08
     },
     buttonDown: {
+        alignItems: 'center',
+        justifyContent: 'center',
         marginTop: screen.width * 0.08
     }
 });
