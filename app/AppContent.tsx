@@ -26,12 +26,9 @@ function getRelevantSunrises(location: { latitude: number; longitude: number; al
 
 export default function AppContent () {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>(null);
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         async function doAsync() {
-            setIsLoading(true);
-
             let locationPermission = await Permissions.askAsync(Permissions.LOCATION);
             if (locationPermission.granted) {
                 let locationData = await Location.getCurrentPositionAsync();
@@ -39,16 +36,12 @@ export default function AppContent () {
                 const {todays, nextSunrise} = getRelevantSunrises(location);
                 setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise));
             }
-
-            setIsLoading(false);
         }
 
         doAsync().then(() => {});
     }, []);
 
     const setNotifications = async () => {
-        setIsLoading(true);
-
         const notificationPermission = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 
         if (notificationPermission.granted) {
@@ -60,8 +53,6 @@ export default function AppContent () {
             await Notifications.scheduleLocalNotificationAsync(lunch.notification, lunch.schedule);
             await Notifications.scheduleLocalNotificationAsync(bed.notification, bed.schedule);
         }
-
-        setIsLoading(false);
     };
 
     let content = sunrise ? (
@@ -89,9 +80,7 @@ export default function AppContent () {
     return (
         <View style={styles.container}>
             {
-                isLoading
-                ? <Text>Loading</Text>
-                : <>
+                <>
                     {content}
                     <TouchableOpacity onPress={setNotifications} style={styles.button}>
                         <FontAwesomeIcon size={screen.width/4} style={styles.iconButton} icon={ faBell } />
