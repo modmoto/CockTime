@@ -1,11 +1,11 @@
 import SunCalc from "suncalc";
 
-interface Ilocation {
+interface ILocation {
     latitude: number;
     longitude: number;
 }
 
-export default function getSunrises(location: Ilocation) {
+export default function getSunrises(location: ILocation) {
     let date = new Date();
     let nextDate = new Date();
     if (date.getHours() > 4) {
