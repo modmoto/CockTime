@@ -1,28 +1,16 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
 import {StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
-import SunCalc from "suncalc";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faSun, faMoon, faUtensils} from "@fortawesome/free-solid-svg-icons";
+import getSunrises from "./SunriseService";
 
 const screen = Dimensions.get('window');
-
-function getRelevantSunrises(location: { latitude: number; longitude: number; altitude: number; accuracy: number; heading: number; speed: number }) {
-    let date = new Date();
-    let nextDate = new Date();
-    if (date.getHours() > 4) {
-        date.setDate(date.getDay() + 1);
-        nextDate.setDate(nextDate.getDay() + 2);
-    }
-    const todays = SunCalc.getTimes(date, location.latitude, location.longitude);
-    const nextSunrise = SunCalc.getTimes(nextDate, location.latitude, location.longitude);
-    return {todays, nextSunrise};
-}
 
 export default function AppContent () {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>(null);
@@ -33,7 +21,7 @@ export default function AppContent () {
             if (locationPermission.granted) {
                 let locationData = await Location.getCurrentPositionAsync();
                 const location = locationData.coords;
-                const {todays, nextSunrise} = getRelevantSunrises(location);
+                const {todays, nextSunrise} = getSunrises(location);
                 setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise));
             }
         }
