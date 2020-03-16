@@ -14,27 +14,24 @@ import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
 import {CTSettings} from "./CTSettings";
+import {loadSettings, saveSettings} from "./Repos/SettingsRepo";
 
 const screen = Dimensions.get('window');
-
-const store = '@CockTomeStore:ctSettings';
 
 export default function SettingsView ({navigation}) {
     const [settings, setSettings] = useState<CTSettings>(new CTSettings());
 
     useEffect(() => {
         async function asyncCall() {
-            const json = await AsyncStorage.getItem(store);
-            const settingsLoaded = JSON.parse(json);
-            setSettings(settingsLoaded ? settingsLoaded : new CTSettings());
+            const settingsLoaded = await loadSettings();
+            setSettings(settingsLoaded);
         }
 
         asyncCall().then(() => {});
     }, []);
 
     async function saveAndClose() {
-        const json = JSON.stringify(settings);
-        await AsyncStorage.setItem(store, json);
+        saveSettings(settings);
         navigation.goBack();
     }
 

@@ -8,6 +8,7 @@ function TimeTo(time: Date):  Date {
 export class TimesOfTheDay {
     private nextSunrise: Date;
     sunrise: Date;
+    easeTimSunrise: Date;
     lunchtime: Date;
     timeToNextLunch: Date;
     timeToBed: Date;
@@ -17,6 +18,7 @@ export class TimesOfTheDay {
 
     constructor(sunrise: Date, nextSunrise: Date) {
         this.sunrise = sunrise;
+        this.easeTimSunrise = sunrise;
         this.nextSunrise = nextSunrise;
 
         this.lunchtime = new Date(sunrise);

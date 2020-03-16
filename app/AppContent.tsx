@@ -9,8 +9,10 @@ import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faSun, faMoon, faUtensils} from "@fortawesome/free-solid-svg-icons";
 import getSunrises from "./SunriseService";
+import {loadSettings} from "./Repos/SettingsRepo";
 
 const screen = Dimensions.get('window');
+
 
 export default function AppContent ({navigation}) {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>();
@@ -22,6 +24,14 @@ export default function AppContent ({navigation}) {
                 let locationData = await Location.getCurrentPositionAsync();
                 const location = locationData.coords;
                 const {todays, nextSunrise} = getSunrises(location);
+                /*const settings = await loadSettings();
+                var finalDayOfEaseTime = settings.easeTimeStartedAt;
+                finalDayOfEaseTime.setDate(finalDayOfEaseTime.getDate() + settings.easeTimeDuration);
+                const {todays: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
+                const {todays: sunriseOnStartDay } = getSunrises(location, settings.easeTimeStartedAt);
+
+                var interval = (sunriseOnFinalDay.getMilliseconds() - sunriseOnStartDay.getMilliseconds()) / settings.easeTimeDuration;
+*/
                 setSunRise(new TimesOfTheDay(todays.dawn, nextSunrise.dawn));
             }
         }
@@ -47,7 +57,7 @@ export default function AppContent ({navigation}) {
     let content = sunrise ? (
         <>
             <Text style={styles.watchText}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
-            <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)}</Text>
+            <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)} ({sunrise.easeTimSunrise.toLocaleTimeString().slice(0, -3)})</Text>
         </>
     ) : null;
     let lowerContent = sunrise
