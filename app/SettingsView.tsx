@@ -25,6 +25,10 @@ export default function SettingsView ({navigation}) {
         setSettings(new CTSettings());
     }, []);
 
+    function saveAndClose() {
+        navigation.goBack();
+    }
+
     return (
         <View style={styles.container}>
             <Text>Is Activated</Text>
@@ -40,7 +44,7 @@ export default function SettingsView ({navigation}) {
                     Array.from(Array(21).keys()).filter(e => e > 6).map(d => <PickerItem key={d} label={d.toString()} value={d}/>)
                 }
             </Picker>
-            <TouchableOpacity style={{marginTop:150}} onPress={() => navigation.goBack()} >
+            <TouchableOpacity style={{marginTop:150}} onPress={saveAndClose} >
                 <FontAwesomeIcon size={screen.width/4} icon={ faSave } />
             </TouchableOpacity>
         </View>
