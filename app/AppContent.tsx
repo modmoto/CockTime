@@ -5,7 +5,7 @@ import {Notifications} from "expo";
 import {StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
-import {ColorPalette} from "./ColorPalette";
+import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faSun, faMoon, faUtensils} from "@fortawesome/free-solid-svg-icons";
 import getSunrises from "./SunriseService";
