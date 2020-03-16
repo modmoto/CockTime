@@ -38,17 +38,9 @@ export default function SettingsView ({navigation}) {
         navigation.goBack();
     }
 
-    return (
-        <View style={styles.container}>
-            <Text>EaseTime:</Text>
-            <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
-                if (e) {
-                    setSettings({...settings, easeTimeStartedAt: new Date()})
-                }
-                setSettings({...settings, isEaseTimeActivated: e})
-            }}/>
+    let easeTimeSettings = settings.isEaseTimeActivated ? (
+        <>
             <Text>started on {settings.easeTimeStartedAt.toString()}</Text>
-
             <Picker
                 selectedValue={settings.easeTimeDuration}
                 style={{width:100, height: 100}}
@@ -59,6 +51,20 @@ export default function SettingsView ({navigation}) {
                     Array.from(Array(21).keys()).filter(e => e > 6).map(d => <PickerItem key={d} label={d.toString()} value={d}/>)
                 }
             </Picker>
+        </>)
+        : null;
+
+    return (
+        <View style={styles.container}>
+            <Text>EaseTime:</Text>
+            <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
+                if (e) {
+                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: new Date()})
+                } else {
+                    setSettings({...settings, isEaseTimeActivated: e})
+                }
+            }}/>
+            {easeTimeSettings}
             <TouchableOpacity style={{marginTop:150}} onPress={saveAndClose} >
                 <FontAwesomeIcon size={screen.width/4} icon={ faSave } />
             </TouchableOpacity>
