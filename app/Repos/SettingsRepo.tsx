@@ -5,7 +5,8 @@ const store = '@CockTomeStore:ctSettings';
 
 export async function loadSettings(): Promise<CTSettings> {
     const json = await AsyncStorage.getItem(store);
-    let settingsLoaded = JSON.parse(json);
+    const settingsLoaded = JSON.parse(json);
+    settingsLoaded.easeTimeStartedAt = new Date(settingsLoaded.easeTimeStartedAt);
     return settingsLoaded ? settingsLoaded : new CTSettings()
 }
 

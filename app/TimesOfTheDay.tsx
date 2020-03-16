@@ -16,9 +16,10 @@ export class TimesOfTheDay {
     timeToNextGetingUp: Date;
     cocktime: Date;
 
-    constructor(sunrise: Date, nextSunrise: Date) {
+    constructor(sunrise: Date, nextSunrise: Date, offset: number) {
         this.sunrise = sunrise;
-        this.easeTimSunrise = sunrise;
+        const milliseconds = sunrise.getTime();
+        this.easeTimSunrise = new Date(milliseconds + offset);
         this.nextSunrise = nextSunrise;
 
         this.lunchtime = new Date(sunrise);

@@ -2,12 +2,12 @@ import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
-import {StyleSheet, Text, TouchableOpacity, View, Dimensions, Button} from "react-native";
+import {Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faBell, faSun, faMoon, faUtensils} from "@fortawesome/free-solid-svg-icons";
+import {faBell, faMoon, faSun, faUtensils} from "@fortawesome/free-solid-svg-icons";
 import getSunrises from "./SunriseService";
 import {loadSettings} from "./Repos/SettingsRepo";
 
@@ -24,15 +24,14 @@ export default function AppContent ({navigation}) {
                 let locationData = await Location.getCurrentPositionAsync();
                 const location = locationData.coords;
                 const {todays, nextSunrise} = getSunrises(location);
-                /*const settings = await loadSettings();
-                var finalDayOfEaseTime = settings.easeTimeStartedAt;
-                finalDayOfEaseTime.setDate(finalDayOfEaseTime.getDate() + settings.easeTimeDuration);
+
+                const settings = await loadSettings();
+                const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration );
                 const {todays: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
                 const {todays: sunriseOnStartDay } = getSunrises(location, settings.easeTimeStartedAt);
+                const interval = (sunriseOnFinalDay.sunrise.getTime() - sunriseOnStartDay.sunrise.getTime()) / settings.easeTimeDuration;
 
-                var interval = (sunriseOnFinalDay.getMilliseconds() - sunriseOnStartDay.getMilliseconds()) / settings.easeTimeDuration;
-*/
-                setSunRise(new TimesOfTheDay(todays.dawn, nextSunrise.dawn));
+                setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval));
             }
         }
 
@@ -46,7 +45,7 @@ export default function AppContent ({navigation}) {
         if (notificationPermission.granted) {
             const morning = new NotificationTouple('CockTime is on!', 'Get up and suck some!', sunrise.sunrise);
             const lunch = new NotificationTouple('Lunch!', 'Have a nive meal', sunrise.lunchtime);
-            const bed = new NotificationTouple('Bedtime!', 'seven hours to next sunset', sunrise.bedtime);
+            const bed = new NotificationTouple('Bedtime!', 'seven hours to next sunrise', sunrise.bedtime);
 
             await Notifications.scheduleLocalNotificationAsync(morning.notification, morning.schedule);
             await Notifications.scheduleLocalNotificationAsync(lunch.notification, lunch.schedule);
