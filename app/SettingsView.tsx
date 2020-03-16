@@ -1,38 +1,53 @@
 import React, {useEffect, useState} from "react";
-import {Dimensions, Picker, PickerItem, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import {
+    AsyncStorage,
+    Dimensions,
+    Picker,
+    PickerItem,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
 import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
+import {CTSettings} from "./CTSettings";
 
 const screen = Dimensions.get('window');
 
-class CTSettings {
-    constructor() {
-        this.easeTimeDuration = 7;
-        this.easeTimeStartedAt = new Date();
-    }
-
-    easeTimeStartedAt: Date;
-    easeTimeDuration: number;
-    isEaseTimeActivated: boolean;
-}
+const store = '@CockTomeStore:ctSettings';
 
 export default function SettingsView ({navigation}) {
     const [settings, setSettings] = useState<CTSettings>(new CTSettings());
 
     useEffect(() => {
-        //loadSettings from file
-        setSettings(new CTSettings());
+        async function asyncCall() {
+            const json = await AsyncStorage.getItem(store);
+            const settingsLoaded = JSON.parse(json);
+            setSettings(settingsLoaded ? settingsLoaded : new CTSettings());
+        }
+
+        asyncCall().then(() => {});
     }, []);
 
-    function saveAndClose() {
+    async function saveAndClose() {
+        const json = JSON.stringify(settings);
+        await AsyncStorage.setItem(store, json);
         navigation.goBack();
     }
 
     return (
         <View style={styles.container}>
-            <Text>Is Activated</Text>
-            <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => setSettings({...settings, isEaseTimeActivated: e})}/>
+            <Text>EaseTime:</Text>
+            <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
+                if (e) {
+                    setSettings({...settings, easeTimeStartedAt: new Date()})
+                }
+                setSettings({...settings, isEaseTimeActivated: e})
+            }}/>
+            <Text>started on {settings.easeTimeStartedAt.toString()}</Text>
 
             <Picker
                 selectedValue={settings.easeTimeDuration}
