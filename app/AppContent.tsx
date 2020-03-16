@@ -22,7 +22,7 @@ export default function AppContent () {
                 let locationData = await Location.getCurrentPositionAsync();
                 const location = locationData.coords;
                 const {todays, nextSunrise} = getSunrises(location);
-                setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise));
+                setSunRise(new TimesOfTheDay(todays.dawn, nextSunrise.dawn));
             }
         }
 
