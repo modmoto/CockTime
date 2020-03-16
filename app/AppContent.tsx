@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import {Notifications} from "expo";
-import {StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View, Dimensions, Button} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
 import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./Styles/ColorPalette";
@@ -12,8 +12,8 @@ import getSunrises from "./SunriseService";
 
 const screen = Dimensions.get('window');
 
-export default function AppContent () {
-    const [sunrise, setSunRise] = useState<TimesOfTheDay>(null);
+export default function AppContent ({navigation}) {
+    const [sunrise, setSunRise] = useState<TimesOfTheDay>();
 
     useEffect(() => {
         async function doAsync() {
@@ -68,15 +68,15 @@ export default function AppContent () {
         : null;
     return (
         <View style={styles.container}>
-            {
-                <>
-                    {content}
-                    <TouchableOpacity onPress={setNotifications} style={styles.button}>
-                        <FontAwesomeIcon size={screen.width/4} style={styles.iconButton} icon={ faBell } />
-                    </TouchableOpacity>
-                    {lowerContent}
-                </>
-            }
+            {content}
+            <TouchableOpacity onPress={setNotifications} style={styles.button}>
+                <FontAwesomeIcon size={screen.width/4} style={styles.iconButton} icon={ faBell } />
+            </TouchableOpacity>
+            {lowerContent}
+            <Button
+                onPress={() => navigation.navigate('SettingsView')}
+                title="Open Settings"
+            />
         </View>
     );
 }
