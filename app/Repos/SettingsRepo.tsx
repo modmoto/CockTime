@@ -7,6 +7,7 @@ export async function loadSettings(): Promise<CTSettings> {
     const json = await AsyncStorage.getItem(store);
     const settingsLoaded = JSON.parse(json);
     settingsLoaded.easeTimeStartedAt = new Date(settingsLoaded.easeTimeStartedAt);
+    settingsLoaded.normalGetUpTime = new Date(settingsLoaded.normalGetUpTime);
     return settingsLoaded ? settingsLoaded : new CTSettings()
 }
 

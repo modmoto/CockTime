@@ -15,7 +15,7 @@ export default function getSunrises(location: ILocation, currentDate: Date = nul
         date.setDate(date.getDate() + 1);
         nextDate.setDate(nextDate.getDate() + 2);
     }
-    const todays = SunCalc.getTimes(date, location.latitude, location.longitude);
+    const sunriseToday = SunCalc.getTimes(date, location.latitude, location.longitude);
     const nextSunrise = SunCalc.getTimes(nextDate, location.latitude, location.longitude);
-    return { todays, nextSunrise };
+    return { sunriseToday, nextSunrise };
 }

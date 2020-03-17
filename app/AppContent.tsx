@@ -23,24 +23,20 @@ export default function AppContent ({navigation}) {
             if (locationPermission.granted) {
                 let locationData = await Location.getCurrentPositionAsync();
                 const location = locationData.coords;
-                const {todays, nextSunrise} = getSunrises(location);
+                const {sunriseToday, nextSunrise} = getSunrises(location);
 
                 const settings = await loadSettings();
                 if (settings.isEaseTimeActivated) {
                     const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration );
-                    const {todays: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
-                    const {todays: sunriseOnStartDay } = getSunrises(location, settings.easeTimeStartedAt);
+                    const {sunriseToday: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
                     let time = sunriseOnFinalDay.sunrise;
-                    let time1 = sunriseOnStartDay.sunrise;
-
                     time.setFullYear(0, 0, 0);
-                    time1.setFullYear(0, 0, 0);
-                    let number = time.getTime() - time1.getTime();
+                    let number = time.getTime() - settings.normalGetUpTime.getTime();
                     const interval = number / settings.easeTimeDuration;
-                    let timesOfTheDay = new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval);
+                    let timesOfTheDay = new TimesOfTheDay(sunriseToday.sunrise, nextSunrise.sunrise, interval);
                     setSunRise(timesOfTheDay);
                 } else {
-                    setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, 0));
+                    setSunRise(new TimesOfTheDay(sunriseToday.sunrise, nextSunrise.sunrise, 0));
                 }
             }
         }
