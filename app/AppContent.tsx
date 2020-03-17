@@ -26,12 +26,16 @@ export default function AppContent ({navigation}) {
                 const {todays, nextSunrise} = getSunrises(location);
 
                 const settings = await loadSettings();
-                const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration );
-                const {todays: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
-                const {todays: sunriseOnStartDay } = getSunrises(location, settings.easeTimeStartedAt);
-                const interval = (sunriseOnFinalDay.sunrise.getTime() - sunriseOnStartDay.sunrise.getTime()) / settings.easeTimeDuration;
+                if (settings.isEaseTimeActivated) {
+                    const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration );
+                    const {todays: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
+                    const {todays: sunriseOnStartDay } = getSunrises(location, settings.easeTimeStartedAt);
+                    const interval = (sunriseOnFinalDay.sunrise.getTime() - sunriseOnStartDay.sunrise.getTime()) / settings.easeTimeDuration;
 
-                setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval));
+                    setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval));
+                } else {
+                    setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, 0));
+                }
             }
         }
 
@@ -55,23 +59,25 @@ export default function AppContent ({navigation}) {
 
     let content = sunrise ? (
         <>
-            <Text style={styles.watchText}>{sunrise.cocktime.toLocaleTimeString().slice(0, - 3)} CT</Text>
-            <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, - 3)} ({sunrise.easeTimSunrise.toLocaleTimeString().slice(0, -3)})</Text>
+            <Text style={styles.watchText}>{sunrise.cocktime.toLocaleTimeString().slice(0, -6)} CT</Text>
+            {
+                <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, -6)} {sunrise.easeTimSunrise ? '(' + sunrise.easeTimSunrise.toLocaleTimeString().slice(0, -6) + ')' : null}</Text>
+            }
         </>
     ) : null;
     let lowerContent = sunrise
         ? <View style={styles.timeContainer}>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faSun } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 3)}</Text>
+                <Text style={styles.textColorAccent}>-{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 6)}</Text>
             </View>
             <View style={styles.buttonDown}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faUtensils } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 3)}</Text>
+                <Text style={styles.textColorAccent}>-{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 6)}</Text>
             </View>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faMoon } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToBed.toLocaleTimeString().slice(0, - 3)}</Text>
+                <Text style={styles.textColorAccent}>-{sunrise.timeToBed.toLocaleTimeString().slice(0, - 6)}</Text>
             </View>
         </View>
         : null;
