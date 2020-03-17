@@ -37,7 +37,8 @@ export default function AppContent ({navigation}) {
                     time1.setFullYear(0, 0, 0);
                     let number = time.getTime() - time1.getTime();
                     const interval = number / settings.easeTimeDuration;
-                    setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval));
+                    let timesOfTheDay = new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, interval);
+                    setSunRise(timesOfTheDay);
                 } else {
                     setSunRise(new TimesOfTheDay(todays.sunrise, nextSunrise.sunrise, 0));
                 }
