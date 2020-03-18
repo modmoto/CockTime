@@ -9,7 +9,7 @@ test('EaseTime on the first day, sun goes up at 6:10', () => {
     ctSettings.easeTimeDuration = 10;
     const et = calculateEaseTime(ctSettings, {latitude: 49.0040869, longitude: 8.5261946}, moment().date(18).month(3));
     expect(et.hours()).toBe(2);
-    expect(et.minutes()).toBe(20);
+    expect(et.minutes()).toBe(18);
 });
 
 test('EaseTime 1 day later', () => {
@@ -19,7 +19,7 @@ test('EaseTime 1 day later', () => {
     ctSettings.easeTimeDuration = 10;
     const et = calculateEaseTime(ctSettings, {latitude: 49.0040869, longitude: 8.5261946}, moment().date(19).month(3));
     expect(et.hours()).toBe(2);
-    expect(et.minutes()).toBe(6);
+    expect(et.minutes()).toBe(4);
 });
 
 test('EaseTime 2 day later', () => {
@@ -29,7 +29,7 @@ test('EaseTime 2 day later', () => {
     ctSettings.easeTimeDuration = 10;
     const et = calculateEaseTime(ctSettings, {latitude: 49.0040869, longitude: 8.5261946}, moment().date(20).month(3));
     expect(et.hours()).toBe(1);
-    expect(et.minutes()).toBe(52);
+    expect(et.minutes()).toBe(50);
 });
 
 test('EaseTime 3 day later', () => {
@@ -39,5 +39,5 @@ test('EaseTime 3 day later', () => {
     ctSettings.easeTimeDuration = 10;
     const et = calculateEaseTime(ctSettings, {latitude: 49.0040869, longitude: 8.5261946}, moment().date(21).month(3));
     expect(et.hours()).toBe(1);
-    expect(et.minutes()).toBe(38);
+    expect(et.minutes()).toBe(36);
 });
