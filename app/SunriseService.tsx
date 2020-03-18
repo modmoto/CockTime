@@ -41,8 +41,8 @@ export function calculateEaseTime(settings: CTSettings, location: ILocation, now
         ? duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart})
         : duration({hours: hoursStart - hoursLastDay, minutes: minutesStart - minutesLastDay});
 
-    const diffAsMinutes = Math.trunc(diffOfHoursOnWHoleEaseTime.asMinutes());
+    const diffAsMinutes = diffOfHoursOnWHoleEaseTime.asMilliseconds();
     const durationOfOneInterval = diffAsMinutes / settings.easeTimeDuration;
     let interval = daysLeft * durationOfOneInterval;
-    return duration().add(interval, "minutes");
+    return duration(interval);
 }
