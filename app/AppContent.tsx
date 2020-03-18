@@ -26,13 +26,14 @@ function calculateEaseTime(settings: CTSettings, location: ILocation): Duration 
     const hoursLastDay = sunriseOfLastDay.hours();
     const minutesStart = getupTime.minutes();
     const minutesLastDay = sunriseOfLastDay.minutes();
-    const diffOfHoursOnWHoleEaseTime = duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart});
+
+    const diffOfHoursOnWHoleEaseTime = (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() < 0)
+    ? duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart})
+    : duration({hours: hoursStart - hoursLastDay, minutes: minutesStart - minutesLastDay});
+
     const diffAsMilliSeconds = diffOfHoursOnWHoleEaseTime.asMilliseconds();
     const durationOfOneInterval = diffAsMilliSeconds / settings.easeTimeDuration;
     let interval = daysLeft * durationOfOneInterval;
-    if (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() > 0) {
-        interval *= -1;
-    }
     return duration(interval);
 }
 
