@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
+import moment from 'moment';
 import {Notifications} from "expo";
 import {Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
@@ -16,12 +17,14 @@ import {ILocation} from "./ILocation";
 const screen = Dimensions.get('window');
 
 function calculateEaseTime(settings: CTSettings, location: ILocation) {
-    const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration);
+    let finalDayOfEaseTime = settings.easeTimeStartedAt.clone();
+    finalDayOfEaseTime.add("days", settings.easeTimeDuration);
     const sunrise = getSunrise(location, finalDayOfEaseTime);
-    let time = sunrise.time;
+    /*let time = sunrise.time.ti;
     time.setFullYear(1970, 0, 1);
     let number = time.getTime() - settings.normalGetUpTime.getTime();
-    return number / settings.easeTimeDuration;
+    return number / settings.easeTimeDuration;*/
+    return 0;
 }
 
 export default function AppContent ({navigation}) {

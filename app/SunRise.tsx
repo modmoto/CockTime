@@ -1,6 +1,9 @@
+import {Moment} from "moment";
+
 export class SunRise {
-    constructor(time: Date) {
+    constructor(time: Moment) {
         this.time = time;
     }
-    time: Date;
+
+    time: Moment;
 }

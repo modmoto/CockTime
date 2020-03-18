@@ -1,12 +1,14 @@
+import moment, {Moment} from "moment";
+
 export class CTSettings {
     constructor() {
         this.easeTimeDuration = 7;
-        this.normalGetUpTime = new Date(1970, 1, 1, 8, 30);
-        this.easeTimeStartedAt = new Date();
+        this.normalGetUpTime = moment({minutes: 30, hours: 8});
+        this.easeTimeStartedAt = moment();
     }
 
-    easeTimeStartedAt: Date;
-    normalGetUpTime: Date;
+    easeTimeStartedAt: Moment;
+    normalGetUpTime: Moment;
     easeTimeDuration: number;
     isEaseTimeActivated: boolean;
 }
