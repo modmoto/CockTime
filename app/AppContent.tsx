@@ -27,6 +27,10 @@ function calculateEaseTime(settings: CTSettings, location: ILocation) {
     return 0;
 }
 
+function toTimeString(date: Date): string{
+    return date.getHours() + ":" + date.getMinutes();
+}
+
 export default function AppContent ({navigation}) {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>();
 
@@ -69,9 +73,9 @@ export default function AppContent ({navigation}) {
 
     let content = sunrise ? (
         <>
-            <Text style={styles.watchText}>{sunrise.cocktime.toLocaleTimeString().slice(0, -6)} CT</Text>
+            <Text style={styles.watchText}>{toTimeString(sunrise.cocktime)} CT</Text>
             {
-                <Text style={styles.watchSubText}>Set Alarm to {sunrise.sunrise.toLocaleTimeString().slice(0, -6)} {sunrise.easeTimSunrise ? '(' + sunrise.easeTimSunrise.toLocaleTimeString().slice(0, -6) + ')' : null}</Text>
+                <Text style={styles.watchSubText}>Set Alarm to {toTimeString(sunrise.sunrise)} {sunrise.easeTimSunrise ? '(' + toTimeString(sunrise.easeTimSunrise) + ')' : null}</Text>
             }
         </>
     ) : null;
@@ -79,15 +83,15 @@ export default function AppContent ({navigation}) {
         ? <View style={styles.timeContainer}>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faSun } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToNextGetingUp.toLocaleTimeString().slice(0, - 6)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToNextGetingUp)}</Text>
             </View>
             <View style={styles.buttonDown}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faUtensils } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToNextLunch.toLocaleTimeString().slice(0, - 6)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToNextLunch)}</Text>
             </View>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faMoon } />
-                <Text style={styles.textColorAccent}>-{sunrise.timeToBed.toLocaleTimeString().slice(0, - 6)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToBed)}</Text>
             </View>
         </View>
         : null;
