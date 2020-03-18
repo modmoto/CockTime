@@ -38,6 +38,7 @@ export default function SettingsView ({navigation}) {
     let easeTimeSettings = settings.isEaseTimeActivated ? (
         <>
             <Text>started on {settings.easeTimeStartedAt.toString()}</Text>
+            <Text>started on {settings.normalGetUpTime.toString()}</Text>
             <Picker
                 selectedValue={settings.easeTimeDuration}
                 style={{width:100, height: 100}}
@@ -55,11 +56,7 @@ export default function SettingsView ({navigation}) {
         <View style={styles.container}>
             <Text>EaseTime:</Text>
             <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
-                if (e) {
-                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: moment(), normalGetUpTime: moment().add(8, "hours").add(30, "minutes")})
-                } else {
-                    setSettings({...settings, isEaseTimeActivated: e})
-                }
+                setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: moment(), normalGetUpTime: moment().hours(8).minutes(30)})
             }}/>
             {easeTimeSettings}
             <TouchableOpacity style={{marginTop:150}} onPress={saveAndClose} >

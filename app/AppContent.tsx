@@ -19,7 +19,8 @@ const screen = Dimensions.get('window');
 function calculateEaseTime(settings: CTSettings, location: ILocation): Duration {
     const now = moment();
     const finalDayOfEaseTime = settings.easeTimeStartedAt.clone().add(settings.easeTimeDuration, "days");
-    const daysLeft = duration(finalDayOfEaseTime.diff(now)).asDays();
+    const daysLeft = Math.trunc(duration(finalDayOfEaseTime.diff(now)).asDays());
+    if (daysLeft === 0) return null;
     const sunriseOfLastDay = getSunrise(location, finalDayOfEaseTime).time;
     const getupTime = settings.normalGetUpTime;
     const hoursStart = getupTime.hours();
@@ -27,7 +28,7 @@ function calculateEaseTime(settings: CTSettings, location: ILocation): Duration 
     const minutesStart = getupTime.minutes();
     const minutesLastDay = sunriseOfLastDay.minutes();
 
-    const diffOfHoursOnWHoleEaseTime = (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() < 0)
+    const diffOfHoursOnWHoleEaseTime = (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() > 0)
     ? duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart})
     : duration({hours: hoursStart - hoursLastDay, minutes: minutesStart - minutesLastDay});
 
