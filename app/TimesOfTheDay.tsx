@@ -1,4 +1,4 @@
-import moment, {Duration, Moment} from "moment";
+import moment, {duration, Duration, Moment} from "moment";
 
 export class TimesOfTheDay {
     private nextSunrise: Moment;
@@ -21,10 +21,10 @@ export class TimesOfTheDay {
         this.bedtime = nextSunrise.clone().subtract(8, "hours");
 
         var now = moment();
-        this.timeToNextGetingUp = moment.duration(this.nextSunrise.diff(now));
-        this.timeToNextLunch = moment.duration(this.lunchtime.diff(now));
-        this.timeToBed = moment.duration(this.bedtime.diff(now));
+        this.timeToNextGetingUp = duration(this.nextSunrise.diff(now));
+        this.timeToNextLunch = duration(this.lunchtime.diff(now));
+        this.timeToBed = duration(this.bedtime.diff(now));
 
-        this.cocktime = moment({hours: now.hours() - sunrise.hours(), minutes: now.minutes() - sunrise.minutes()});
+        this.cocktime = now.clone().subtract(sunrise.hours(), "hours").subtract(sunrise.minutes(), "minutes");
     }
 }
