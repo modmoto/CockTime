@@ -1,7 +1,8 @@
 import SunCalc from "suncalc";
 import {ILocation} from "./ILocation";
 import {SunRise} from "./SunRise";
-import moment, {Moment} from "moment";
+import moment, {duration, Duration, Moment} from "moment";
+import {CTSettings} from "./CTSettings";
 
 export function getSunrises(location: ILocation, currentDate: Moment = null): {sunriseToday: Moment, nextSunrise: Moment} {
     let date = currentDate ? currentDate : moment();
@@ -22,4 +23,26 @@ export function getSunrises(location: ILocation, currentDate: Moment = null): {s
 export function getSunrise(location: ILocation, date: Moment = null): SunRise {
     const sunriseToday = SunCalc.getTimes(date.toDate(), location.latitude, location.longitude);
     return new SunRise(moment(sunriseToday.sunrise));
+}
+
+export function calculateEaseTime(settings: CTSettings, location: ILocation, now: Moment = null): Duration {
+    now = now ? now : moment();
+    const finalDayOfEaseTime = settings.easeTimeStartedAt.clone().add(settings.easeTimeDuration, "days");
+    const daysLeft = Math.trunc(duration(finalDayOfEaseTime.diff(now)).asDays());
+    if (daysLeft === 0) return null;
+    const sunriseOfLastDay = getSunrise(location, finalDayOfEaseTime).time;
+    const getupTime = settings.normalGetUpTime;
+    const hoursStart = getupTime.hours();
+    const hoursLastDay = sunriseOfLastDay.hours();
+    const minutesStart = getupTime.minutes();
+    const minutesLastDay = sunriseOfLastDay.minutes();
+
+    const diffOfHoursOnWHoleEaseTime = (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() > 0)
+        ? duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart})
+        : duration({hours: hoursStart - hoursLastDay, minutes: minutesStart - minutesLastDay});
+
+    const diffAsMinutes = Math.trunc(diffOfHoursOnWHoleEaseTime.asMinutes());
+    const durationOfOneInterval = diffAsMinutes / settings.easeTimeDuration;
+    let interval = daysLeft * durationOfOneInterval;
+    return duration().add(interval, "minutes");
 }

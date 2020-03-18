@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import moment, {duration, Duration, Moment} from 'moment';
+import { Duration, Moment} from 'moment';
 import {Notifications} from "expo";
 import {Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
@@ -9,34 +9,10 @@ import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faMoon, faSun, faUtensils} from "@fortawesome/free-solid-svg-icons";
-import {getSunrise, getSunrises} from "./SunriseService";
+import {calculateEaseTime, getSunrises} from "./SunriseService";
 import {loadSettings} from "./Repos/SettingsRepo";
-import {CTSettings} from "./CTSettings";
-import {ILocation} from "./ILocation";
 
 const screen = Dimensions.get('window');
-
-function calculateEaseTime(settings: CTSettings, location: ILocation): Duration {
-    const now = moment();
-    const finalDayOfEaseTime = settings.easeTimeStartedAt.clone().add(settings.easeTimeDuration, "days");
-    const daysLeft = Math.trunc(duration(finalDayOfEaseTime.diff(now)).asDays());
-    if (daysLeft === 0) return null;
-    const sunriseOfLastDay = getSunrise(location, finalDayOfEaseTime).time;
-    const getupTime = settings.normalGetUpTime;
-    const hoursStart = getupTime.hours();
-    const hoursLastDay = sunriseOfLastDay.hours();
-    const minutesStart = getupTime.minutes();
-    const minutesLastDay = sunriseOfLastDay.minutes();
-
-    const diffOfHoursOnWHoleEaseTime = (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() > 0)
-    ? duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart})
-    : duration({hours: hoursStart - hoursLastDay, minutes: minutesStart - minutesLastDay});
-
-    const diffAsMilliSeconds = diffOfHoursOnWHoleEaseTime.asMilliseconds();
-    const durationOfOneInterval = diffAsMilliSeconds / settings.easeTimeDuration;
-    let interval = daysLeft * durationOfOneInterval;
-    return duration(interval);
-}
 
 function toTimeString(date: Moment): string{
     return date.hours().toString().padStart(2, '0') + ":" + date.minutes().toString().padStart(2, '0');
