@@ -1,4 +1,4 @@
-import moment, {duration, Duration, Moment} from "moment";
+import moment, {Duration, Moment} from "moment";
 
 export class TimesOfTheDay {
     private nextSunrise: Moment;
@@ -11,10 +11,9 @@ export class TimesOfTheDay {
     timeToBed: Duration;
     timeToNextGetingUp: Duration;
 
-    constructor(sunrise: Moment, nextSunrise: Moment, offset: number) {
+    constructor(sunrise: Moment, nextSunrise: Moment, offset: Duration) {
         this.sunrise = sunrise.clone();
-        this.easeTimSunrise = sunrise.clone();
-       /* this.easeTimSunrise = offset >= 10 ? new Date(sunrise.getTime() + offset) : null;*/
+        this.easeTimSunrise = offset ? sunrise.clone().add(offset) : null;
         this.nextSunrise = nextSunrise.clone();
 
         this.lunchtime = sunrise.clone().add(5, "hours");

@@ -21,5 +21,5 @@ export function getSunrises(location: ILocation, currentDate: Moment = null): {s
 
 export function getSunrise(location: ILocation, date: Moment = null): SunRise {
     const sunriseToday = SunCalc.getTimes(date.toDate(), location.latitude, location.longitude);
-    return new SunRise(sunriseToday.sunrise);
+    return new SunRise(moment(sunriseToday.sunrise));
 }

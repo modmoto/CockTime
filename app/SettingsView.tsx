@@ -31,7 +31,7 @@ export default function SettingsView ({navigation}) {
     }, []);
 
     async function saveAndClose() {
-        saveSettings(settings);
+        await saveSettings(settings);
         navigation.goBack();
     }
 
@@ -56,7 +56,7 @@ export default function SettingsView ({navigation}) {
             <Text>EaseTime:</Text>
             <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
                 if (e) {
-                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: moment()})
+                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: moment(), normalGetUpTime: moment().add(8, "hours").add(30, "minutes")})
                 } else {
                     setSettings({...settings, isEaseTimeActivated: e})
                 }

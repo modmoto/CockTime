@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import moment, {Duration, Moment} from 'moment';
+import moment, {duration, Duration, Moment} from 'moment';
 import {Notifications} from "expo";
 import {Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
@@ -9,22 +9,31 @@ import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faMoon, faSun, faUtensils} from "@fortawesome/free-solid-svg-icons";
-import {getSunrises, getSunrise} from "./SunriseService";
+import {getSunrise, getSunrises} from "./SunriseService";
 import {loadSettings} from "./Repos/SettingsRepo";
 import {CTSettings} from "./CTSettings";
 import {ILocation} from "./ILocation";
 
 const screen = Dimensions.get('window');
 
-function calculateEaseTime(settings: CTSettings, location: ILocation) {
-    let finalDayOfEaseTime = settings.easeTimeStartedAt.clone();
-    finalDayOfEaseTime.add("days", settings.easeTimeDuration);
-    const sunrise = getSunrise(location, finalDayOfEaseTime);
-    /*let time = sunrise.time.ti;
-    time.setFullYear(1970, 0, 1);
-    let number = time.getTime() - settings.normalGetUpTime.getTime();
-    return number / settings.easeTimeDuration;*/
-    return 0;
+function calculateEaseTime(settings: CTSettings, location: ILocation): Duration {
+    const now = moment();
+    const finalDayOfEaseTime = settings.easeTimeStartedAt.clone().add(settings.easeTimeDuration, "days");
+    const daysLeft = duration(finalDayOfEaseTime.diff(now)).asDays();
+    const sunriseOfLastDay = getSunrise(location, finalDayOfEaseTime).time;
+    const getupTime = settings.normalGetUpTime;
+    const hoursStart = getupTime.hours();
+    const hoursLastDay = sunriseOfLastDay.hours();
+    const minutesStart = getupTime.minutes();
+    const minutesLastDay = sunriseOfLastDay.minutes();
+    const diffOfHoursOnWHoleEaseTime = duration({hours: hoursLastDay - hoursStart, minutes: minutesLastDay - minutesStart});
+    const diffAsMilliSeconds = diffOfHoursOnWHoleEaseTime.asMilliseconds();
+    const durationOfOneInterval = diffAsMilliSeconds / settings.easeTimeDuration;
+    let interval = daysLeft * durationOfOneInterval;
+    if (duration(getupTime.diff(sunriseOfLastDay)).asMilliseconds() > 0) {
+        interval *= -1;
+    }
+    return duration(interval);
 }
 
 function toTimeString(date: Moment): string{
@@ -52,7 +61,7 @@ export default function AppContent ({navigation}) {
                     let timesOfTheDay = new TimesOfTheDay(sunriseToday, nextSunrise, interval);
                     setSunRise(timesOfTheDay);
                 } else {
-                    setSunRise(new TimesOfTheDay(sunriseToday, nextSunrise, 0));
+                    setSunRise(new TimesOfTheDay(sunriseToday, nextSunrise, null));
                 }
             }
         }
