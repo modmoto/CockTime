@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {
-    AsyncStorage,
     Dimensions,
     Picker,
     PickerItem,
@@ -15,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
 import {CTSettings} from "./CTSettings";
 import {loadSettings, saveSettings} from "./Repos/SettingsRepo";
+import moment from "moment";
 
 const screen = Dimensions.get('window');
 
@@ -56,7 +56,7 @@ export default function SettingsView ({navigation}) {
             <Text>EaseTime:</Text>
             <Switch value={settings.isEaseTimeActivated} onValueChange={(e) => {
                 if (e) {
-                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: new Date()})
+                    setSettings({...settings, isEaseTimeActivated: e, easeTimeStartedAt: moment()})
                 } else {
                     setSettings({...settings, isEaseTimeActivated: e})
                 }

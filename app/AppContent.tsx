@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import moment from 'moment';
+import moment, {Duration, Moment} from 'moment';
 import {Notifications} from "expo";
 import {Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {NotificationTouple} from "./NotificationTouple";
@@ -27,8 +27,12 @@ function calculateEaseTime(settings: CTSettings, location: ILocation) {
     return 0;
 }
 
-function toTimeString(date: Date): string{
-    return date.getHours() + ":" + date.getMinutes();
+function toTimeString(date: Moment): string{
+    return date.hours().toString().padStart(2, '0') + ":" + date.minutes().toString().padStart(2, '0');
+}
+
+function toTimeStringFromDuration(duration: Duration): string{
+    return duration.hours().toString().padStart(2, '0') + ":" + duration.minutes().toString().padStart(2, '0');
 }
 
 export default function AppContent ({navigation}) {
@@ -45,10 +49,10 @@ export default function AppContent ({navigation}) {
                 const settings = await loadSettings();
                 if (settings.isEaseTimeActivated) {
                     const interval = calculateEaseTime(settings, location);
-                    let timesOfTheDay = new TimesOfTheDay(sunriseToday.sunrise, nextSunrise.sunrise, interval);
+                    let timesOfTheDay = new TimesOfTheDay(sunriseToday, nextSunrise, interval);
                     setSunRise(timesOfTheDay);
                 } else {
-                    setSunRise(new TimesOfTheDay(sunriseToday.sunrise, nextSunrise.sunrise, 0));
+                    setSunRise(new TimesOfTheDay(sunriseToday, nextSunrise, 0));
                 }
             }
         }
@@ -83,15 +87,15 @@ export default function AppContent ({navigation}) {
         ? <View style={styles.timeContainer}>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faSun } />
-                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToNextGetingUp)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeStringFromDuration(sunrise.timeToNextGetingUp)}</Text>
             </View>
             <View style={styles.buttonDown}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faUtensils } />
-                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToNextLunch)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeStringFromDuration(sunrise.timeToNextLunch)}</Text>
             </View>
             <View style={styles.buttonUp}>
                 <FontAwesomeIcon style={styles.watchSubText} size={screen.width/10} icon={ faMoon } />
-                <Text style={styles.textColorAccent}>-{toTimeString(sunrise.timeToBed)}</Text>
+                <Text style={styles.textColorAccent}>-{toTimeStringFromDuration(sunrise.timeToBed)}</Text>
             </View>
         </View>
         : null;

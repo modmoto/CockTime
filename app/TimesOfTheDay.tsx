@@ -1,38 +1,32 @@
-function TimeTo(time: Date):  Date {
-    const timeToBed = new Date(time);
-    timeToBed.setHours(time.getHours() - new Date().getHours());
-    timeToBed.setMinutes(time.getMinutes()  - new Date().getMinutes());
-    return timeToBed;
-}
+import moment, {duration, Duration, Moment} from "moment";
 
 export class TimesOfTheDay {
-    private nextSunrise: Date;
-    sunrise: Date;
-    easeTimSunrise: Date;
-    lunchtime: Date;
-    timeToNextLunch: Date;
-    timeToBed: Date;
-    bedtime: Date;
-    timeToNextGetingUp: Date;
-    cocktime: Date;
+    private nextSunrise: Moment;
+    cocktime: Moment;
+    sunrise: Moment;
+    easeTimSunrise: Moment;
+    lunchtime: Moment;
+    bedtime: Moment;
+    timeToNextLunch: Duration;
+    timeToBed: Duration;
+    timeToNextGetingUp: Duration;
 
-    constructor(sunrise: Date, nextSunrise: Date, offset: number) {
-        this.sunrise = sunrise;
-        this.easeTimSunrise = offset >= 10 ? new Date(sunrise.getTime() + offset) : null;
-        this.nextSunrise = nextSunrise;
+    constructor(sunrise: Moment, nextSunrise: Moment, offset: number) {
+        this.sunrise = sunrise.clone();
+        this.easeTimSunrise = sunrise.clone();
+       /* this.easeTimSunrise = offset >= 10 ? new Date(sunrise.getTime() + offset) : null;*/
+        this.nextSunrise = nextSunrise.clone();
 
-        this.lunchtime = new Date(sunrise);
-        this.lunchtime.setHours(this.lunchtime.getHours() + 5);
+        this.lunchtime = sunrise.clone().add(5, "hours");
 
-        this.bedtime = new Date(nextSunrise);
-        this.bedtime.setHours(this.bedtime.getHours() - 8);
+        this.bedtime = nextSunrise.clone().subtract(8, "hours");
 
-        this.timeToNextGetingUp = TimeTo(nextSunrise);
-        this.timeToNextLunch = TimeTo(this.lunchtime);
-        this.timeToBed = TimeTo(this.bedtime);
+        var now = moment();
 
-        this.cocktime = new Date();
-        this.cocktime.setHours(this.cocktime.getHours() - this.sunrise.getHours());
-        this.cocktime.setMinutes(this.cocktime.getMinutes() - this.sunrise.getMinutes());
+        this.timeToNextGetingUp = moment.duration(this.nextSunrise.diff(now));
+        this.timeToNextLunch = moment.duration(this.lunchtime.diff(now));
+        this.timeToBed = moment.duration(this.bedtime.diff(now));
+
+        this.cocktime = moment({hours: now.hours() - sunrise.hours(), minutes: now.minutes() - sunrise.minutes()});
     }
 }

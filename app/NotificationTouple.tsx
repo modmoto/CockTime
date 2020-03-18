@@ -1,8 +1,10 @@
+import {Moment} from "moment";
+
 export class NotificationTouple {
     notification: { android: { sound: boolean; sticky: boolean; vibrate: boolean; priority: string }; title: string; body: string; ios: { sound: boolean; vibrate: boolean } };
     schedule: { time: Date };
 
-    constructor(title: string, body: string, time: Date) {
+    constructor(title: string, body: string, time: Moment) {
         this.notification = {
             title: title,
             body: body,
@@ -19,7 +21,7 @@ export class NotificationTouple {
                 }
         };
         this.schedule = {
-            time: time
+            time: time.toDate()
         };
     }
 }
