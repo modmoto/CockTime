@@ -8,11 +8,21 @@ import {TimesOfTheDay} from "./TimesOfTheDay";
 import {ColorPalette} from "./Styles/ColorPalette";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faBell, faMoon, faSun, faUtensils} from "@fortawesome/free-solid-svg-icons";
-import getSunrises from "./SunriseService";
+import {getSunrises, getSunrise} from "./SunriseService";
 import {loadSettings} from "./Repos/SettingsRepo";
+import {CTSettings} from "./CTSettings";
+import {ILocation} from "./ILocation";
 
 const screen = Dimensions.get('window');
 
+function calculateEaseTime(settings: CTSettings, location: ILocation) {
+    const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration);
+    const sunrise = getSunrise(location, finalDayOfEaseTime);
+    let time = sunrise.time;
+    time.setFullYear(1970, 0, 1);
+    let number = time.getTime() - settings.normalGetUpTime.getTime();
+    return number / settings.easeTimeDuration;
+}
 
 export default function AppContent ({navigation}) {
     const [sunrise, setSunRise] = useState<TimesOfTheDay>();
@@ -27,12 +37,7 @@ export default function AppContent ({navigation}) {
 
                 const settings = await loadSettings();
                 if (settings.isEaseTimeActivated) {
-                    const finalDayOfEaseTime = new Date(settings.easeTimeStartedAt.getTime() + 86400000 * settings.easeTimeDuration );
-                    const {sunriseToday: sunriseOnFinalDay } = getSunrises(location, finalDayOfEaseTime);
-                    let time = sunriseOnFinalDay.sunrise;
-                    time.setFullYear(0, 0, 0);
-                    let number = time.getTime() - settings.normalGetUpTime.getTime();
-                    const interval = number / settings.easeTimeDuration;
+                    const interval = calculateEaseTime(settings, location);
                     let timesOfTheDay = new TimesOfTheDay(sunriseToday.sunrise, nextSunrise.sunrise, interval);
                     setSunRise(timesOfTheDay);
                 } else {

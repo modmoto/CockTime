@@ -1,11 +1,8 @@
 import SunCalc from "suncalc";
+import {ILocation} from "./ILocation";
+import {SunRise} from "./SunRise";
 
-interface ILocation {
-    latitude: number;
-    longitude: number;
-}
-
-export default function getSunrises(location: ILocation, currentDate: Date = null) {
+export function getSunrises(location: ILocation, currentDate: Date = null) {
 
     let date = currentDate ? currentDate : new Date();
     let nextDate = new Date(currentDate);
@@ -18,4 +15,9 @@ export default function getSunrises(location: ILocation, currentDate: Date = nul
     const sunriseToday = SunCalc.getTimes(date, location.latitude, location.longitude);
     const nextSunrise = SunCalc.getTimes(nextDate, location.latitude, location.longitude);
     return { sunriseToday, nextSunrise };
+}
+
+export function getSunrise(location: ILocation, date: Date = null): SunRise {
+    const sunriseToday = SunCalc.getTimes(date, location.latitude, location.longitude);
+    return new SunRise(sunriseToday.sunrise);
 }
